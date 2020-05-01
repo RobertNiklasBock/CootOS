@@ -1,41 +1,68 @@
-SRCS = $(shell find . -name '*.cpp')
-OBJS = $(SRCS:.cpp=.o)
+# === Settings ================================================================
+IMAGE      = kernel8.img
+MACHINE    = raspi3
+TARGET     = aarch64-elf
+LDTARGET   = aarch64elf
 
-GPPPARAMS   = -m32 -fno-use-cxa-atexit -nostdlib -fno-builtin -fno-rtti -fno-exceptions -fno-leading-underscore
-GPPINCLUDES = -I header/
-LDPARAMS    = -melf_i386
+USE_QEMU  ?= 1
 
-objects = $(OBJS) boot_sector.o
+# === Source Code & Object Files ==============================================
+INC_DIR    = include/
+SRC_DIR    = source/
+OBJ_DIR    = build/
 
-%.o: %.cpp
-	g++ $(GPPPARAMS) $(GPPINCLUDES) -o $@ -c $<
+ENTRYPOINT = start.S
+LINKERFILE = link.ld
 
-%.o: %.asm
-	nasm -f bin $< -o $@ 
-	
-mykernel.bin: linker.ld $(objects)
-	ld $(LDPARAMS) -T $< -o $@ $(objects)
+INC        = $(INC_DIR:%=-I%)
+SRC        = $(shell find $(SRCDIR) -name "*.c")
+OBJ        = $(SRC:.c=.o)
 
-install: mykernel.bin
-	sudo cp $< /boot/mykernel.bin
-	
-mykernel.iso: mykernel.bin
-	mkdir iso
-	mkdir iso/boot
-	mkdir iso/boot/grub
-	cp $< iso/boot/
-	echo 'set timeout-0' >> iso/boot/grub/grub.cfg
-	echo 'set default-0' >> iso/boot/grub/grub.cfg
-	echo 'menuentry "My Operating System"{' >> iso/boot/grub/grub.cfg
-	echo '  multiboot /boot/mykernel.bin' >> iso/boot/grub/grub.cfg
-	echo ' boot' >> iso/boot/grub/grub.cfg
-	echo '}' >> iso/boot/grub/grub.cfg
-	grub-mkrescue --output=$@ iso
-	rm -rf iso 
+EP_OBJFILE = $(ENTRYPOINT:.S=.o)
+ELFFILE    = $(IMAGE:.img=.elf)
+
+
+# === Compiler & Tools ========================================================
+CC         = clang
+CCFLAGS    = --target=$(TARGET) -Wall -O2 -ffreestanding -nostdinc \
+             -nostdlib -mcpu=cortex-a53+nosimd
+
+IGNORED_WARNS = -Wno-unknown-pragmas
+CCFLAGS   += $(IGNORED_WARNS)
+
+
+ifeq ($(USE_QEMU), 1)
+    CCFLAGS +=-D QEMU
+endif
+
+LD         = ld.lld
+LDFLAGS    = -m $(LDTARGET)
+
+OBJCOPY    = llvm-objcopy
+OBJCPFLAGS = -O binary
+
+QEMU       = qemu-system-aarch64
+
+# === Rules ===================================================================
+
+all: clean $(IMAGE)
+
+tell:
+	@echo $(SRC)
+	@echo $(OBJ)
+
+run: all
+	$(QEMU) -M $(MACHINE) -kernel $(IMAGE) -serial null -serial stdio
 
 clean:
-	rm $(objects)
-	
-# run: mykernel.iso
-# 	(killall VirtualBox && sleep 1) || true
-# 	VirtualBox --startvm "My Operating System" &
+	rm $(IMAGE) $(OBJ) $(EP_OBJFILE) $(ELFFILE) >/dev/null 2>/dev/null || true
+
+$(EP_OBJFILE): $(ENTRYPOINT)
+	$(CC) $(CCFLAGS) $(INC) -c $^ -o $@
+
+$(IMAGE): $(EP_OBJFILE) $(OBJ)
+	$(LD) $(LDFLAGS) $(EP_OBJFILE) $(OBJ) -T $(LINKERFILE) -o $(ELFFILE)
+	$(OBJCOPY) $(OBJCPFLAGS) $(ELFFILE) $(IMAGE)
+
+%.o: %.c
+	$(CC) $(CCFLAGS) $(INC) -c $^ -o $@

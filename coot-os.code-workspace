@@ -1,0 +1,17 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+    ],
+    "settings": {
+        "git.ignoreLimitWarning": true,
+        "C_Cpp.default.systemIncludePath": [
+            ""
+        ],
+        "files.insertFinalNewline": true,
+        "files.associations": {
+            "atags.h": "c"
+        }
+    }
+}
