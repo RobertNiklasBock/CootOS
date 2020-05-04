@@ -8,11 +8,23 @@ typedef struct NASP(MailBoxMessage) {
     uint8_t channel: 4;
 } NASP(MailBoxMessage_t);
 
-typedef struct NASP(MailBoxMessageBuffer_t) {
+typedef struct NASP(MailBoxMessageBuffer) {
     uint32_t size;
     uint32_t type;
     uint8_t tags[1];
 } NASP(MailBoxMessageBuffer_t);
+
+typedef enum NASP(MailBoxChannelID) { 
+    POWER       = 0,
+    FRAMEBUFFER = 1,
+    VUART       = 2,
+    VCHIQ       = 3,
+    LEDS        = 4,
+    BUTTONS     = 5,
+    TOUCH       = 6,
+    COUNT       = 7,
+    PROPERTY    = 8
+} NASP(MailBoxChannelID_t);
 
 typedef enum NASP(MailBoxMessageTagID) {
     #pragma region Meta

@@ -7,7 +7,7 @@ uint32_t coot_raspi_atags__get_mem_size(coot_raspi_atags__Atag_t* atags) {
     return 1024*1024*128;
 #else
     while(atags->id != COOT_RASPI_ATAGS__TAGID_NONE) {
-        if (atags->id == COOT_RASPI_ATAGS__TAGID_MEM) {
+        if (atags->id == COOT_RASPI_ATAGS__TAGID_MEMORY) {
             return atags->mem.size;
         }
         atags = (coot_raspi_atags__Atag_t*)(((uint32_t *)atags) + atags->tag_size);

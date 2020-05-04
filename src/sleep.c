@@ -6,8 +6,8 @@ void busy_wait(uint64_t cycles) {
     }
 }
 
-void wait_until(uint8_t condition) {
-    while(!condition) {
+void wait_until(uint8_t cond_call) {
+    while(!cond_call) {
         asm volatile("nop");
     } 
 }

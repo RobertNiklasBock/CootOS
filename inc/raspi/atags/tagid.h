@@ -1,0 +1,18 @@
+#pragma once
+#define NASP(name)  coot_raspi_atags__##name
+#define CNASP(name)  COOT_RASPI_ATAGS__##name
+
+#define CNASP(TAGID_NONE)      (0x00000000)
+#define CNASP(TAGID_CORE)      (0x54410001)
+#define CNASP(TAGID_MEMORY)    (0x54410002)
+#define CNASP(TAGID_VIDEOTEXT) (0x54410003)
+#define CNASP(TAGID_RAMDISK)   (0x54410004)
+#define CNASP(TAGID_INITRD2)   (0x54420005)
+#define CNASP(TAGID_SERIAL)    (0x54410006)
+#define CNASP(TAGID_REVISION)  (0x54410007)
+#define CNASP(TAGID_VIDEOLFB)  (0x54410008)
+#define CNASP(TAGID_CMDLINE)   (0x54410009)
+
+
+#undef CNASP
+#undef NASP

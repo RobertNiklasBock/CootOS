@@ -3,10 +3,10 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/include/*"
+                "${workspaceFolder}/inc/*"
             ],
             "forcedInclude": [
-                "${workspaceFolder}/include/*"
+                "${workspaceFolder}/inc/*"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/clang",

@@ -7,8 +7,8 @@ LDTARGET   = aarch64elf
 USE_QEMU  ?= 1
 
 # === Source Code & Object Files ==============================================
-INC_DIR    = include/
-SRC_DIR    = source/
+INC_DIR    = inc/
+SRC_DIR    = src/
 OBJ_DIR    = build/
 
 ENTRYPOINT = start.S

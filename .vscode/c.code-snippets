@@ -20,12 +20,10 @@
         "body": [
             "#pragma once",
             "#define NASP(name)  coot${TM_DIRECTORY/(.*\\/include)*([A-Za-z]*)\\/([A-Za-z]*)/$2_$3/g}__##name",
-            "#define CNASP(name) COOT${TM_DIRECTORY/(.*\\/include)*([A-Za-z]*)\\/([A-Za-z]*)/${2:/upcase}_${3:/upcase}/g}__##name",
             "",
             "$0",
             "",
             "#undef NASP",
-            "#undef CNASP",
             ""
         ]
     },

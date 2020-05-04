@@ -3,7 +3,7 @@
 #define CNASP(name) COOT_RASPI_ATAGS__##name
 
 #include <std/inttypes.h>
-#include "raspi/atags/TAGID.h"
+#include "raspi/atags/tagid.h"
 
 typedef struct {
     uint32_t size;
